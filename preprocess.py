@@ -28,8 +28,6 @@ sentence_embeddings = np.array(sentence_embeddings)
 training_data = pd.DataFrame(data=sentence_embeddings[0:,0:])
 training_data['Ticket_Doorgestuurd_Naar'] = joined_dataframe_loaded['Ticket_Doorgestuurd_Naar'].astype('category').cat.codes
 print(training_data)
-#print(training_data.dtypes)
-#print(list(joined_dataframe_loaded.columns.values))
 labels = joined_dataframe_loaded['Labels']
 
 # Running classifier (multi-layer perceptron)
@@ -61,7 +59,7 @@ y_pred = cross_val_predict(classifier, training_data, labels, cv=5)
 print(y_pred)
 
 #for i in range(len(labels)):
-#	print('Prediction:', y_pred[i], 'Label:', labels[i])
+#	print('Prediction:', y_pred[i], 'Ground truth:', labels[i])
 
 # Show frequencies for all the predictions
 print('Frequency counts for ground truth')
@@ -72,9 +70,9 @@ frequencies_predictions = [[key, len(list(group))] for key, group in groupby(sor
 print(frequencies_predictions)
 
 # Display confusion matrix of cross validation results
-confusion_matrix = confusion_matrix(labels, y_pred, normalize='all')
-#print(confusion_matrix)
-confusion_matrix_df = pd.DataFrame(confusion_matrix)
-sn.set(font_scale=1)
+mapping = ['geen label', 'niet geabonneerd op zender', 'krijgt inlogscherm', 'user niet bekend in Enviro', 'nummerportering probleem', 'mailprobleem', 'activatie blijft hangen in MaxCare', 'koppelcode Fox Sports niet werkzaam', 'vaste telefonie probleem', 'macadres onjuist geconfigureerd', 'vastgelopen activatie', 'verkeerde hardware toegestuurd', 'foutmelding Macadres in use', 'vastgelopen activatie op network provider', 'vastgelopen activatie van modem', 'centrale storing', 'vastgelopen order', 'diensten missen in Netadmin', 'poorten zijn niet enabled', 'er is een fout opgetreden', 'radio valt weg', 'patchprobleem']
+confusion_matrix = confusion_matrix(labels, y_pred, normalize='pred')
+confusion_matrix_df = pd.DataFrame(confusion_matrix, index = [i for i in mapping], columns = [i for i in mapping])
+sn.set(font_scale=0.4)
 sn.heatmap(confusion_matrix_df)
 plt.show()
